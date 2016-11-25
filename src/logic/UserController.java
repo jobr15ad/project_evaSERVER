@@ -1,16 +1,12 @@
 package logic;
 
 import shared.LectureDTO;
-import shared.Logging;
 import shared.ReviewDTO;
-
 import java.sql.Timestamp;
 import java.util.ArrayList;
-
 import service.DBWrapper;
 import shared.CourseDTO;
 import shared.UserDTO;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -35,11 +31,12 @@ public class UserController {
             params.put("cbs_mail", String.valueOf(cbs_email));
             params.put("password", String.valueOf(password));
 
-            String[] attributes = {"id"};
+            String[] attributes = {"id, type"};
             ResultSet rs = DBWrapper.getRecords("user", attributes, params, null, 0);
 
             while (rs.next()) {
                 user.setId(rs.getInt("id"));
+                user.setType(rs.getString("type"));
                 System.out.print("User found");
                 return user;
             }
@@ -58,7 +55,7 @@ public class UserController {
 
         try {
             Map<String, String> params = new HashMap();
-            params.put("id", String.valueOf(lectureId));
+            params.put("lecture_id", String.valueOf(lectureId));
             params.put("is_deleted", "0");
             String[] attributes = {"id", "user_id", "lecture_id", "rating", "comment"};
 
@@ -77,7 +74,6 @@ public class UserController {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            Logging.log(e,2,"Kunne ikke hente getReviews");
         }
         return reviews;
     }
@@ -98,18 +94,14 @@ public class UserController {
 
                 lecture.setStartDate(rs.getTimestamp("start"));
                 lecture.setEndDate(rs.getTimestamp("end"));
-                //lecture.setId(rs.getInt("id"));
+                lecture.setLectureId(rs.getInt("id"));
                 lecture.setType(rs.getString("type"));
                 lecture.setDescription(rs.getString("description"));
 
                 lectures.add(lecture);
             }
 
-
-        }
-        catch (SQLException e){
-            e.printStackTrace();
-        Logging.log(e,2,"Kunne ikke hente getLecture");
+        } catch (SQLException e) {
 
         }
         return lectures;
@@ -126,11 +118,7 @@ public class UserController {
             isDeleted.put("is_deleted", "1");
 
             Map<String, String> whereParams = new HashMap();
-
-            if(userId != 0) {
-                whereParams.put("user_id", String.valueOf(userId));
-            }
-
+            whereParams.put("user_id", String.valueOf(userId));
             whereParams.put("id", String.valueOf(reviewId));
 
             DBWrapper.updateRecords("review", isDeleted, whereParams);
@@ -138,7 +126,6 @@ public class UserController {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            Logging.log(e,2,"Softdelete kunne ikke slette review, SoftDeleteReview.");
             isSoftDeleted = false;
         }
         return isSoftDeleted;
@@ -167,9 +154,7 @@ public class UserController {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            Logging.log(e,2,"Kunne ikke hente getCourses");
         }
         return courses;
     }
-
 }
