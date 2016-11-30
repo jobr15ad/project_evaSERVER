@@ -204,7 +204,7 @@ public class AdminController extends UserController {
         }
 
         Scanner input1 = new Scanner(System.in);
-        System.out.println("Indtast id for det studie brugeren skal tilknyttet: ");
+        System.out.println("Indtast id for det studie brugeren skal tilknyttes: ");
         int idStudyChoice = input1.nextInt();
 
         for (CourseDTO courseDTO : getCourseStudy(idStudyChoice)) {
