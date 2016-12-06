@@ -36,6 +36,18 @@ public class StudentEndpoint extends UserEndpoint {
         }
     }
 
+
+    @OPTIONS
+    @Path("/review/")
+    public Response deleteReview() {
+        return Response
+                .status(200)
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Headers", "Content-Type")
+                .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
+                .build();
+    }
+
     @DELETE
     @Consumes("application/json")
     @Path("/review/")
@@ -55,4 +67,21 @@ public class StudentEndpoint extends UserEndpoint {
             return errorResponse(404, "Failed. Couldn't delete the chosen review.");
         }
     }
+
+    protected Response errorResponse(int status, String message) {
+
+        return Response.status(status).entity(new Gson().toJson(Digester.encrypt("{\"message\": \"" + message + "\"}"))).build();
+    }
+
+    protected Response successResponse(int status, Object data) {
+        Gson gson = new Gson();
+
+        //Adding response headers to enable CORS in the Chrome browser
+        return Response.status(status).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Headers", "Content-Type").header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE").entity(gson.toJson(data)).build();
+
+        // return Response.status(status).entity(gson.toJson(data)).build();
+        //return Response.status(status).entity(gson.toJson(Digester.encrypt(gson.toJson(data)))).build();
+
+    }
 }
+

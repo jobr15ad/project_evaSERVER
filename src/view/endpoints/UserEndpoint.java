@@ -81,9 +81,20 @@ public class UserEndpoint {
 
 
 
+    @OPTIONS
+    @Path("/review/{lectureId}")
+    public Response getReviews() {
+        return Response
+                .status(200)
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Headers", "Content-Type")
+                .build();
+
+    }
+
 
     @GET
-    @Consumes("applications/json")
+    @Produces("applications/json")
     @Path("/review/{lectureId}")
     public Response getReviews(@PathParam("lectureId") int lectureId) {
         Gson gson = new Gson();
@@ -139,6 +150,8 @@ public class UserEndpoint {
         //return Response.status(status).entity(gson.toJson(Digester.encrypt(gson.toJson(data)))).build();
 
         //Adding response headers to enable CORS in the Chrome browser
-        return Response.status(status).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Headers", "Content-Type").entity(gson.toJson(data)).build();
+       // return Response.status(status).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Headers", "Content-Type").entity(gson.toJson(data)).build();
+        return Response.status(status).header("Access-Control-Allow-Origin", "*").header("Access-Control-Allow-Headers", "Content-Type").header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE").entity(gson.toJson(data)).build();
+
     }
 }
